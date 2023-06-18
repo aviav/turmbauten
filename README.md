@@ -3,6 +3,11 @@
 The initial main goal of this project is to let me try out new LLMs
 more quickly.
 
+## Getting started
+
+Run `python bau.py`. When I wrote this, this worked for me with Python
+3.11.
+
 ## Targeted API
 
 Features that I'd like to support, as long as I have to do that:
@@ -49,3 +54,8 @@ what I describe is possible -- I have done all of the targeted things
 in an unorganized fashion on my dev machine already -- and has a low
 threshold to entry. As soon as the knowledge about what's possible is
 common enough, I'm sure there'll be better maintainers than myself.
+
+## Acknowledgments
+
+Various LLMs and open-source programs have been used to create this
+project. This was important because I don't really know how to Python.
