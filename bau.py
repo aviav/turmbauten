@@ -17,20 +17,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import argparse
+import configparser
 
-def main():
+def main(args=None):
     parser = argparse.ArgumentParser(description='Try out new LLMs more quickly')
-    parser.add_argument('-a','--arg', help='Help for arg', required=False)
+
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    parser.add_argument('-a','--arg', default=config.get('DEFAULT', 'ArgDefaultValue', fallback=None), help='Help for arg')
     parser.add_argument('--license', action='store_true', help='Display the license information')
-    args = parser.parse_args()
+    parser.add_argument('--config', help='Path to the configuration file', default='config.ini')
+
+    args = parser.parse_args(args)
 
     if args.license:
         print_license()
-        return
+        return {'arg': args.arg, 'license': True}
 
-    if args.arg:
-        print(args.arg)
-        return args.arg
+    return {'arg': args.arg, 'license': False}
 
 def print_license():
     print("""

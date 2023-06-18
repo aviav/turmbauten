@@ -1,15 +1,17 @@
 import unittest
 from unittest.mock import patch
-from io import StringIO
-from bau import main, print_license
+import bau
 
-class TestYourScript(unittest.TestCase):
-    def test_main(self):
-        @patch('sys.stdout', new_callable=StringIO)
-        def test_license(self, mock_stdout):
-            expected_license = print_license()
-            main(['--license'])
-            self.assertEqual(mock_stdout.getvalue().strip(), expected_license.strip())
+class TestMain(unittest.TestCase):
+    def test_license(self):
+        with patch('builtins.print') as mock_print:
+            result = bau.main(['--license'])
+            mock_print.assert_called_once_with('\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n    GNU General Public License for more details.\n\n    You should have received a copy of the GNU General Public License\n    along with this program.  If not, see <https://www.gnu.org/licenses/>.\n    ')
+            self.assertEqual(result, {'arg': 'default value', 'license': True})
 
-if __name__ == "__main__":
+    def test_arg(self):
+        result = bau.main(['-a', 'test_arg'])
+        self.assertEqual(result, {'arg': 'test_arg', 'license': False})
+
+if __name__ == '__main__':
     unittest.main()
