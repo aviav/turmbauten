@@ -1,5 +1,3 @@
-#!/usr/bin/env python3.11
-
 """
 Turmbauten
 Copyright (C) 2023 Tobias Fankhänel
