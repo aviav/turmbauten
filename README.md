@@ -53,7 +53,7 @@ Vectorize the bible -- using Langchain under the hood:
 * Assuming there's a default embedding model stored in
   `embedding-default` below the default directory for machine learning
   models
-* Call `python bau.py vectorize bible`
+* Call `python bau.py vectorize --document bible`
 
 Start a new conversation without any memory -- using Langchain under
 the hood:
