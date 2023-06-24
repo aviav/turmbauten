@@ -14,6 +14,7 @@ Features that I'd like to support, as long as I have to do that:
 
 * Run a multi-feature chain with any suitable new LLM with minimal
   manual config effort. Multi-feature features:
+    * Document vectorization
     * Document retrieval
     * Conversation
         * Vector database for long-term memory
@@ -34,6 +35,70 @@ Features that I'd like to support, as long as I have to do that:
 I have many additional ideas for features, but the main challenge is
 to limit my goals enough so that there's a working prototype pretty
 soon that actually saves me time.
+
+Config:
+
+* Default directory for documents and their vectorizations
+* Default directory for conversation long-term memories
+* Default directory for machine learning models
+* Path to Llama.cpp which is used for infinite generation mode
+* Path to GGML fork that works with Falcon-based models
+* Path to Langchain-GPTQ integration
+
+Examples for how to use these features -- _to be implemented_:
+
+Vectorize the bible -- using Langchain under the hood:
+
+* Store PDF in `bible` subdirectory below default document directory
+* Assuming there's a default embedding model stored in
+  `embedding-default` below the default directory for machine learning
+  models
+* Call `python bau.py vectorize bible`
+
+Start a new conversation without any memory -- using Langchain under
+the hood:
+
+* Assuming there's a default LLM with default config stored in
+  `llm-default` below the default directory for machine learning
+  models
+* Assuming the LLM config includes info on context length and
+  prompting syntax of the model
+* Call `python bau.py converse --initial-prompt 'How're you doing
+  today?'`
+
+Start a new conversation with document retrieval -- using Langchain
+under the hood:
+
+* Assuming the bible has been vectorized
+* Assuming there's a sensible default for how many document snippets
+  are retrieved on each query
+* Assuming the memory of a previous conversation is saved in a
+  directory named `thoughts-on-religion` below the long-term
+  conversation memory folders
+* Assuming there's a sensible default for how many elements of
+  long-term memory are retrieved on each query
+* Assuming there's a sensible default for short-term memory context
+  length
+* Assuming there's a default LLM with default config stored in
+  `llm-default` below the default directory for machine learning
+  models
+* Assuming the LLM config includes info on context length and
+  prompting syntax of the model
+* Call `python bau.py converse --doc-db bible --memory-db
+  thoughts-on-religion --short-term-memory --initial-prompt 'Why is
+  there something rather than nothing?`
+
+Start a new conversation in infinite mode -- using Llama.cpp or a fork
+supporting Falcon under the hood -- without any kind of memory or
+document retrieval:
+
+* Assuming there's a default LLM with default config stored in
+  `llm-default` below the default directory for machine learning
+  models
+* Assuming the LLM config includes info on context length, llama-based
+  vs. falcon-based and prompting syntax of the model
+* Call `python bau.py converse --infinite --initial-prompt 'How're you
+  doing today?'`
 
 ## Contributing
 
