@@ -41,39 +41,54 @@ Config:
 * Default directory for documents and their vectorizations
 * Default directory for conversation long-term memories
 * Default directory for machine learning models
+* Default directory for prompts
 * Path to Llama.cpp which is used for infinite generation mode
 * Path to GGML fork that works with Falcon-based models
 * Path to Langchain-GPTQ integration
 
-Examples for how to use these features -- _to be implemented_:
+Examples for how to use these features -- _to be implemented, except
+where noted otherwise_:
 
-Vectorize the bible -- using Langchain under the hood:
+Vectorize 'Pride and Prejudice' -- using Langchain under the hood --
+_should already work_:
 
-* Store PDF in `bible` subdirectory below default document directory
+* Store PDF in `pride-and-prejudice` subdirectory below default
+  document directory
 * Assuming there's a default embedding model stored in
   `embedding-default` below the default directory for machine learning
   models
-* Call `python bau.py vectorize --document bible`
+* Call `python bau.py vectorize --document pride-and-prejudice`
 
-Start a new conversation without any memory -- using Langchain under
-the hood:
+Start a new conversation without any memory or documents -- using
+Langchain under the hood:
 
 * Assuming there's a default LLM with default config stored in
   `llm-default` below the default directory for machine learning
   models
 * Assuming the LLM config includes info on context length and
   prompting syntax of the model
-* Call `python bau.py converse --initial-prompt 'How're you doing
-  today?'`
+* Call `python bau.py converse`
+
+Start a new conversation without any memory, read prompt from file --
+using Langchain under the hood:
+
+* Assuming there's a default LLM with default config stored in
+  `llm-default` below the default directory for machine learning
+  models
+* Assuming the LLM config includes info on context length and
+  prompting syntax of the model
+* Assuming there's a prompt file stored under the given path below the
+  default prompts directory
+* Call `python bau.py converse --initial-prompt-file test_prompt`
 
 Start a new conversation with document retrieval -- using Langchain
 under the hood:
 
-* Assuming the bible has been vectorized
+* Assuming Pride and Prejudice has been vectorized
 * Assuming there's a sensible default for how many document snippets
   are retrieved on each query
 * Assuming the memory of a previous conversation is saved in a
-  directory named `thoughts-on-religion` below the long-term
+  directory named `thoughts-on-literature` below the long-term
   conversation memory folders
 * Assuming there's a sensible default for how many elements of
   long-term memory are retrieved on each query
@@ -84,9 +99,9 @@ under the hood:
   models
 * Assuming the LLM config includes info on context length and
   prompting syntax of the model
-* Call `python bau.py converse --doc-db bible --memory-db
-  thoughts-on-religion --short-term-memory --initial-prompt 'Why is
-  there something rather than nothing?`
+* Call `python bau.py converse --doc-db pride-and-prejudice
+  --memory-db thoughts-on-literature --short-term-memory
+  --initial-prompt 'Why is there pride and prejudice?`
 
 Start a new conversation in infinite mode -- using Llama.cpp or a fork
 supporting Falcon under the hood -- without any kind of memory or
