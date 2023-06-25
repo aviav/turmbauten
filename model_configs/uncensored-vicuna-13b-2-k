@@ -1,0 +1,8 @@
+[PATHS]
+Directory = Wizard-Vicuna-13B-Uncensored
+Filename = Wizard-Vicuna-13B-Uncensored.ggmlv3.q2_K.bin
+
+[PROPERTIES]
+Params = 13b
+Quantization = 2-k
+Template = Vicuna_1_1_Uncensored

@@ -1,0 +1,8 @@
+[PATHS]
+Directory = Wizard-Vicuna-30B-Uncensored
+Filename = Wizard-Vicuna-30B-Uncensored.ggmlv3.q5_K_S.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 5-k-s
+Template = Vicuna_1_1_Uncensored

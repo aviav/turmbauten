@@ -1,0 +1,9 @@
+[PATHS]
+Directory = WizardLM-Uncensored-SuperCOT-Storytelling
+Filename = WizardLM-Uncensored-SuperCOT-Storytelling.ggmlv3.q4_K_M.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 4-k-m
+Purpose = Storytelling
+Template = Supercot-Allow-All

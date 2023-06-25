@@ -1,0 +1,12 @@
+[PATHS]
+Directory = PMC_LLAMA-7B
+Filename = PMC_LLAMA-7B.ggmlv3.q8_0.bin
+
+[PROPERTIES]
+Params = 7b
+Quantization = 8-0
+Purpose = Trained on medical papers
+Template = Pure-question
+
+[SETTINGS]
+NGpuLayers = 55

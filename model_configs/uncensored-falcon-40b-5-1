@@ -1,0 +1,8 @@
+[PATHS]
+Directory = WizardLM-Uncensored-Falcon-40B
+Filename = WizardLM-Uncensored-Falcon-40b.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 40b
+Quantization = 5-1
+

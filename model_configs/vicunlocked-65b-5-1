@@ -1,0 +1,11 @@
+[PATHS]
+Directory = VicUnlocked-Alpaca-65B
+Filename = VicUnlocked-Alpaca-65B.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 65b
+Quantization = 5-1
+Template = Alpaca
+
+[SETTINGS]
+NGpuLayers = 35

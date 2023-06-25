@@ -1,0 +1,12 @@
+[PATHS]
+Directory = samantha-33B
+Filename = samantha-33B.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 33b
+Quantization = 5-1
+Purpose = Companion AI
+Template = Samantha
+
+[SETTINGS]
+NGpuLayers = 55

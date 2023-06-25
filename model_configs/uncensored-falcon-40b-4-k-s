@@ -1,0 +1,7 @@
+[PATHS]
+Directory = WizardLM-Uncensored-Falcon-40B
+Filename = wizard-falcon40b.ggmlv3.q4_K_S.bin
+
+[PROPERTIES]
+Params = 40b
+Quantization = 4-k-s

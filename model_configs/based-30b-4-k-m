@@ -1,0 +1,12 @@
+[PATHS]
+Directory = based-30B
+Filename = based-30b.ggmlv3.q4_K_M.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 4-k-m
+Purpose = Will speak its mind
+Template = Vicuna-1-1-based
+
+[SETTINGS]
+NGpuLayers = 62

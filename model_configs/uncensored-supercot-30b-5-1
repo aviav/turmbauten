@@ -1,0 +1,12 @@
+[PATHS]
+Directory = WizardLM-Uncensored-SuperCOT-Storytelling
+Filename = WizardLM-Uncensored-SuperCOT-Storytelling.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 5_1
+Purpose = Storytelling
+Template = Supercot-Allow-All
+
+[SETTINGS]
+NGpuLayers = 55

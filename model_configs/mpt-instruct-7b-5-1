@@ -1,0 +1,7 @@
+[PATHS]
+Directory = mpt-7b
+Filename = mpt-7b-instruct.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 7b
+Quantization = 5-1

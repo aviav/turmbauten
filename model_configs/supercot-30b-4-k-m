@@ -1,0 +1,9 @@
+[PATHS]
+Directory = llama-30b-supercot
+Filename = llama-30b-supercot.ggmlv3.q4_K_M.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 4-k-m
+Purpose = Good for use with LangChain
+Template = Supercot

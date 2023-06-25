@@ -1,0 +1,11 @@
+[PATHS]
+Directory = Nous-Hermes-13B
+Filename = nous-hermes-13b.ggmlv3.q8_0.bin
+
+[PROPERTIES]
+Params = 13b
+Quantization = 8-0
+Template = Alpaca
+
+[SETTINGS]
+NGpuLayers = 55

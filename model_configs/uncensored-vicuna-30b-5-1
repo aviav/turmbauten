@@ -1,0 +1,11 @@
+[PATHS]
+Directory = Wizard-Vicuna-30B-Uncensored
+Filename = Wizard-Vicuna-30B-Uncensored.ggmlv3.q5_1.bin
+
+[PROPERTIES]
+Params = 30b
+Quantization = 5-1
+Template = Vicuna_1_1_Uncensored
+
+[SETTINGS]
+NGpuLayers = 55
