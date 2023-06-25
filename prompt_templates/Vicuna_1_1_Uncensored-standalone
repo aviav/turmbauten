@@ -1,0 +1,10 @@
+You are an AI.
+
+{context}
+
+{history}
+
+{conversation_memory}
+
+USER: {question}
+ASSISTANT:
