@@ -1,0 +1,11 @@
+### Instruction:
+You are an AI. Conversation history:
+{history}
+
+{conversation_memory}
+
+### Input:
+{input}
+
+### Response:
+### Certainly!

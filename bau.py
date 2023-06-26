@@ -27,7 +27,7 @@ from langchain.vectorstores import Chroma
 from langchain.llms import LlamaCpp
 from langchain.memory import ConversationSummaryBufferMemory, VectorStoreRetrieverMemory, CombinedMemory
 from langchain.vectorstores import Chroma
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import ConversationalRetrievalChain, ConversationChain
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
@@ -111,6 +111,8 @@ def setup_llm(conversation_config):
     model_filename = model_config['PATHS']['Filename']
     model_fullpath = conversation_config['ModelsPath'] + model_directory + '/' + model_filename
     n_gpu_layers = model_config['SETTINGS']['NGpuLayers']
+    combined_memory_model_template = read_from_file(conversation_config['TemplatesPath'] + model_config['PROPERTIES']['Template'] + '-combined-memory')
+    combined_memory_prompt_template = PromptTemplate(template=combined_memory_model_template, input_variables=["input", "history", "conversation_memory"])
     summarize_model_template = read_from_file(conversation_config['TemplatesPath'] + model_config['PROPERTIES']['Template'] + '-summarize')
     summarize_prompt_template = PromptTemplate(template=summarize_model_template, input_variables=["summaries"])
     standalone_model_template = read_from_file(conversation_config['TemplatesPath'] + model_config['PROPERTIES']['Template'] + '-standalone')
@@ -126,14 +128,14 @@ def setup_llm(conversation_config):
     )
     llm.client.verbose = True
 
-    return llm, summarize_prompt_template, standalone_prompt_template, context_length
+    return llm, combined_memory_prompt_template, summarize_prompt_template, standalone_prompt_template, context_length
 
-def setup_short_term_memory(llm, context_length):
-    summary_buffer_memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=context_length/8, input_key='question', output_key='answer')
+def setup_short_term_memory(llm, context_length, question_key):
+    summary_buffer_memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=context_length/8, input_key=question_key, output_key='answer')
 
     return summary_buffer_memory
 
-def setup_long_term_memory(embeddings_config, conversation_config):
+def setup_long_term_memory(embeddings_config, conversation_config, question_key):
     model_name = embeddings_config['ModelName']
     model_kwargs = {'device': embeddings_config['ModelDevice']}
     long_term_memories_path = conversation_config['LongTermMemoriesPath']
@@ -149,14 +151,14 @@ def setup_long_term_memory(embeddings_config, conversation_config):
     retriever = conversational_memory_db.as_retriever(search_kwargs=dict(k=2))
     class AnswerVectorMemory(VectorStoreRetrieverMemory):
         def save_context(self, inputs: dict[str, any], outputs: dict[str, str]) -> None:
-            return super().save_context({'question': inputs['question']},{'answer': outputs['answer']})
-    vectorstore_memory = AnswerVectorMemory(retriever=retriever, memory_key='conversation_memory', input_key='question')
+            return super().save_context({'question': inputs[question_key]},{'answer': outputs['answer']})
+    vectorstore_memory = AnswerVectorMemory(retriever=retriever, memory_key='conversation_memory', input_key=question_key)
 
     return vectorstore_memory
 
-def setup_combined_memory(llm, context_length, embeddings_config, conversation_config):
-    short_term_memory = setup_short_term_memory(llm, context_length)
-    long_term_memory = setup_long_term_memory(embeddings_config, conversation_config)
+def setup_combined_memory(llm, context_length, embeddings_config, conversation_config, question_key):
+    short_term_memory = setup_short_term_memory(llm, context_length, question_key)
+    long_term_memory = setup_long_term_memory(embeddings_config, conversation_config, question_key)
     combined_memory = CombinedMemory(memories=[short_term_memory, long_term_memory])
 
     return combined_memory
@@ -171,10 +173,23 @@ def setup_document_retriever(embeddings_config, document_name):
 
     return document_retriever
 
-def setup_conversational_retrieval_chain(embeddings_config, conversation_config, document_name):
-    llm, summarize_prompt_template, standalone_prompt_template, context_length = setup_llm(conversation_config)
+def setup_conversation_chain(embeddings_config, conversation_config, question_key):
+    llm, combined_memory_prompt_template, summarize_prompt_template, standalone_prompt_template, context_length = setup_llm(conversation_config)
+    combined_memory = setup_combined_memory(llm, context_length, embeddings_config, conversation_config, question_key)
+    chain = ConversationChain(
+        llm=llm,
+        prompt=combined_memory_prompt_template,
+        verbose=True,
+        memory=combined_memory,
+        output_key='answer',
+    )
+
+    return chain
+
+def setup_conversational_retrieval_chain(embeddings_config, conversation_config, document_name, question_key):
+    llm, combined_memory_prompt_template, summarize_prompt_template, standalone_prompt_template, context_length = setup_llm(conversation_config)
     document_retriever = setup_document_retriever(embeddings_config, document_name)
-    combined_memory = setup_combined_memory(llm, context_length, embeddings_config, conversation_config)
+    combined_memory = setup_combined_memory(llm, context_length, embeddings_config, conversation_config, question_key)
     chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         condense_question_llm=llm,
@@ -193,23 +208,28 @@ def setup_conversational_retrieval_chain(embeddings_config, conversation_config,
 
     return chain
 
-def print_result(result):
+def print_result(result, question_key, print_output):
     print('\n\n\n')
-    print('=== Conversation memory: ===\n\n', result['conversation_memory'])
-    print('\n')
-    print('=== History: ===\n\n', result['history'])
-    print('\n')
-    for document in result['source_documents']:
-        print('=== Dokument: ===\n\n', document.page_content)
+    if 'conversation_memory' in print_output:
+        print('=== Conversation memory: ===\n\n', result['conversation_memory'])
         print('\n')
-    print('=== Question: ===\n\n', result['question'])
-    print('\n')
-    print('=== Answer: ===\n\n', result['answer'])
+    if 'history' in print_output:
+        print('=== History: ===\n\n', result['history'])
+        print('\n')
+    if 'source_documents' in print_output:
+        for document in result['source_documents']:
+            print('=== Dokument: ===\n\n', document.page_content)
+            print('\n')
+    if question_key in print_output:
+        print('=== Question: ===\n\n', result[question_key])
+    if 'answer' in print_output:
+        print('\n')
+        print('=== Answer: ===\n\n', result['answer'])
 
-def ask_ai_interactive(llm_chain, initial_query):
+def ask_ai_interactive(llm_chain, initial_query, question_key, print_output):
     chat_history = []
-    result = llm_chain({"question": initial_query, "chat_history": chat_history})
-    print_result(result)
+    result = llm_chain({question_key: initial_query, "chat_history": chat_history})
+    print_result(result, question_key, print_output)
 
     while True:
         query = input("\nRequest: ")
@@ -217,8 +237,8 @@ def ask_ai_interactive(llm_chain, initial_query):
         if query.lower() == "exit":
             break
 
-        result = llm_chain({"question": query, "chat_history": chat_history})
-        print_result(result)
+        result = llm_chain({question_key: query, "chat_history": chat_history})
+        print_result(result, question_key, print_output)
 
 def main(args=None):
     parser = argparse.ArgumentParser(description='Try out new LLMs more quickly')
@@ -264,8 +284,16 @@ def main(args=None):
             question = args.initial_prompt
         else:
             question = default_prompt
-        chain = setup_conversational_retrieval_chain(embeddings_config, conversation_config, document)
-        ask_ai_interactive(chain, question)
+        if document != None:
+            question_key = "question"
+            chain = setup_conversational_retrieval_chain(embeddings_config, conversation_config, document, question_key)
+            print_output = ['conversation_memory', 'history', 'source_documents', question_key, 'answer']
+            ask_ai_interactive(chain, question, question_key, print_output)
+        else:
+            question_key = "input"
+            chain = setup_conversation_chain(embeddings_config, conversation_config, question_key)
+            print_output = ['conversation_memory', 'history', question_key, 'answer']
+            ask_ai_interactive(chain, question, question_key, print_output)
 
         return {'arg': args}
 

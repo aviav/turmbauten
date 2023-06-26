@@ -1,10 +1,14 @@
 ### Instruction:
-{input}
-
-### Input:
+You are an AI. Conversation history:
 {history}
 
 {conversation_memory}
+
+Context:
+{context}
+
+### Input:
+{question}
 
 ### Response:
 ### Certainly!
